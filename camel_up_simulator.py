@@ -13,26 +13,34 @@ mirages = []
 
 remaining_dice = ['white','green','yellow','orange','blue']
 
+def is_desert_tile(track, location):
+    if track[location] == -1:
+        return True;
+    elif track[location] == 1:
+        return True
+    else:
+        return False
+
 def place_desert_tile(track, location, tile_type):
-    if track[location] != [] and track[location-1] != [] and track[location+1] != []:
+    if track[location] != [] and not is_desert_tile(track,location-1) and  not is_desert_tile(track,location+1):
         print "Tile already occupied, cannot place desert tile here!"
         return
     track[location] = tile_type
     return
 
 def remove_desert_tile(track, location):
-    if type(track[location]) == list:
+    if not is_desert_tile(track, location):
         print "No desert tile at this location"
-        return
+        return False
     track[location] = []
-    return
+    return True
 
 def move_camel(track, camel, roll):
     camel_start = -1
     search = 0
     ## Find the starting location of the camel and extract the camel unit.
     while camel_start == -1:
-        if type(track[search]) == list:
+        if not is_desert_tile(track,search):
             if camel in track[search]:
                 camel_start = search
                 camel_unit_start = track[search].index(camel)
@@ -42,9 +50,9 @@ def move_camel(track, camel, roll):
         search += 1
     new_location = camel_start + roll
     mirage = False
-    tile_type = track[new_location]
-    if type(tile_type) != list:
-        new_location += track[new_location]
+    if is_desert_tile(track,new_location):
+        tile_type = track[new_location]
+        new_location += tile_type
         if tile_type == -1:
             mirage = True
     if mirage == False:
@@ -57,22 +65,24 @@ def results(track):
     results = []
     search = 0
     while len(results) < 5:
-        if type(track[search]) == list:
+        if not is_desert_tile(track,search):
             for camel in track[search]:
                 results.append(camel)
         search += 1
     results.reverse()
     return results
         
-
-for (camel,location) in camel_starts:
-    start_track[location].append(camel)
-
-for oasis in oases:
-    place_desert_tile(oasis, 1)
-
-for mirage in mirages:
-    place_desert_tile(mirage, -1)
+def initialise_track(camel_starts, oases, mirages):
+    start_track = []
+    for i in range(18):
+        start_track.append([])
+    for (camel,location) in camel_starts:
+        start_track[location].append(camel)
+    for oasis in oases:
+        place_desert_tile(oasis, 1)
+    for mirage in mirages:
+        place_desert_tile(mirage, -1)
+    return start_track
 
 
 def rollout(start_track, remaining_dice):
@@ -95,8 +105,7 @@ def run_simulations(track, dice, n):
             scores[results[i]] += i+1
     sorted_results = sorted(scores.items(), key=operator.itemgetter(1))
     return sorted_results
-        
 
-    
+start_track = initialise_track(camel_starts, oases, mirages)   
 print start_track     
 print run_simulations(start_track, remaining_dice, 10000)
