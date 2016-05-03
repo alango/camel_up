@@ -2,10 +2,6 @@ import random
 import copy
 import operator
 
-start_track = []
-for i in range(18):
-    start_track.append([])
-
 camel_starts = [('blue',1), ('green',1), ('orange',1), ('white',1), ('yellow',1)]
 
 oases = []
