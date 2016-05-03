@@ -105,7 +105,8 @@ def run_simulations(track, dice, n):
         for i in range(5):
             scores[results[i]][i-1] += +1
     scores = {camel:map(lambda x:x*100.0/n, score) for camel, score in scores.items()}
-    for score in scores.items():
+    sorted_scores = sorted(scores.items(), key=operator.itemgetter(1), reverse=True)
+    for score in sorted_scores:
         print score
     return scores
 
