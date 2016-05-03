@@ -95,7 +95,6 @@ def run_simulations(track, dice, n):
             scores[results[i]] += i+1
     sorted_results = sorted(scores.items(), key=operator.itemgetter(1))
     return sorted_results
-        
 
     
 print start_track     
