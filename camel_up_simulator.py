@@ -97,15 +97,18 @@ def rollout(start_track, remaining_dice):
     return results(track)
 
 def run_simulations(track, dice, n):
-    scores = {'blue':0,'green':0,'orange':0,'white':0,'yellow':0}
+    scores = {"blue":[0]*5,"green":[0]*5,"orange":[0]*5,"white":[0]*5,"yellow":[0]*5}
+    
     for i in range(n):
         if i % 2500==0: print i
         results = rollout(track, dice)
         for i in range(5):
-            scores[results[i]] += i+1
-    sorted_results = sorted(scores.items(), key=operator.itemgetter(1))
-    return sorted_results
+            scores[results[i]][i-1] += +1
+    scores = {camel:map(lambda x:x*100.0/n, score) for camel, score in scores.items()}
+    for score in scores.items():
+        print score
+    return scores
 
 start_track = initialise_track(camel_starts, oases, mirages)   
 print start_track     
-print run_simulations(start_track, remaining_dice, 10000)
+run_simulations(start_track, remaining_dice, 10000)
